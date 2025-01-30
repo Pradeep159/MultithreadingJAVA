@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SpringBootApplication
-public class PrintNoThread implements Runnable{
+public class PrintNoUsingThread implements Runnable{
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -47,9 +47,9 @@ public class PrintNoThread implements Runnable{
     public static void main(String[] args)
     {
 
-        SpringApplication.run(PrintNoThread.class, args);
+        SpringApplication.run(PrintNoUsingThread.class, args);
 
-        PrintNoThread p = new PrintNoThread();
+        PrintNoUsingThread p = new PrintNoUsingThread();
         for(int i=0;i<10;i++)
         {
             Thread t = new Thread(p);

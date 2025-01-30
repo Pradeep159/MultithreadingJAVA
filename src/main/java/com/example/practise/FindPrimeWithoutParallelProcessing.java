@@ -48,14 +48,15 @@ public class FindPrimeWithoutParallelProcessing {
     {
         FindPrimeWithoutParallelProcessing t=new FindPrimeWithoutParallelProcessing();
         int count=0;
+        int number = 10000000;
+        int noOfbatchs = 10;
+        int batchSize = number / noOfbatchs;
+
         long begin = System.currentTimeMillis();
 
-//        count=t.countPrime(1, 100);
-
-        int n=1000000;
-        for(int i=0;i<10;i++)
+        for(int i=0;i<noOfbatchs;i++)
         {
-            count=count+t.countPrime(i*n+1,(i+1)*n);
+            count=count+t.countPrime(i*batchSize+1,(i+1)*batchSize);
         }
 
         long end = System.currentTimeMillis();
