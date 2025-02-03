@@ -1,6 +1,7 @@
 package com.example.practise;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FindPrimeWithParallelProcessing implements Runnable {
@@ -20,10 +21,8 @@ public class FindPrimeWithParallelProcessing implements Runnable {
     private int start;
     private int end;
     private int countPrime;
-    static Thread t = null;
     // Shared resource to store the sum of outputs
     static AtomicInteger sum = new AtomicInteger(0);
-    private int startNo=1;
 
     public FindPrimeWithParallelProcessing(int start, int end)
     {
@@ -79,34 +78,38 @@ public class FindPrimeWithParallelProcessing implements Runnable {
         int threads = thread;
         int baseBatchSize = number / threads;
         int remainingNumbers = number % threads;
-//        resetting for every iteration
+        int startNo=1;
+//        resetting sum for every iteration
         sum.set(0);
+
+        List<Thread> threadList = new ArrayList<>(); // Store all threads
 
         long begin = System.currentTimeMillis();
         for (int i = 0; i < threads; i++)
         {
             int batchSize = baseBatchSize + (i < remainingNumbers ? 1 : 0);
             int endNo = startNo + batchSize - 1;
-            t = new Thread(new FindPrimeWithParallelProcessing(startNo, endNo));
-//            System.out.println("startNo:" + startNo + " endNo:" + endNo);
+            Thread t = new Thread(new FindPrimeWithParallelProcessing(startNo, endNo));
+            threadList.add(t); // Store thread
             t.start();
             startNo = endNo + 1;
         }
 
         // Wait for all threads to complete
-        try {
-            t.join();   // Main thread waits for the thread to finish
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        for (Thread t : threadList) {
+            try {
+                t.join();   // Main thread waits for all created threads
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-
-        // This block/code will execute only after all threads have finished
+        // This block will execute only after all threads finish
         long end = System.currentTimeMillis();
         long timetaken = end - begin;
 
-        System.out.println("Total no. of prime no. are:- "+sum.get());  // Print the combined output
-        System.out.println("Total time taken:- " + timetaken + "miliseconds");
+        System.out.println("Total no. of prime no. are:- " + sum.get());
+        System.out.println("Total time taken:- " + timetaken + " milliseconds");
     }
 
 
@@ -116,9 +119,9 @@ public class FindPrimeWithParallelProcessing implements Runnable {
         FindPrimeWithParallelProcessing p2 = new FindPrimeWithParallelProcessing();
         FindPrimeWithParallelProcessing p3 = new FindPrimeWithParallelProcessing();
 
-        p1.makeThreads(100,14);
-        p2.makeThreads(10000,10);
-//        p3.makeThreads(10000000,100);
+        p1.makeThreads(100,19);
+        p2.makeThreads(10000,70);
+        p3.makeThreads(10000000,153);
 
     }
 
